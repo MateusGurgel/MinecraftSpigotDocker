@@ -1,0 +1,16 @@
+FROM openjdk:18-jdk-alpine
+
+RUN apk add --no-cache wget git \
+    && wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar \
+    && java -jar BuildTools.jar --rev latest \
+    && mv spigot-*.jar spigot.jar \
+    && echo "eula=true" > eula.txt
+
+RUN mkdir spigot
+RUN mv spigot.jar spigot/spigot.jar
+RUN mv eula.txt spigot/eula.txt
+
+
+EXPOSE 25565
+
+CMD ["java", "-Xms1G", "-Xmx10G", "-jar", "spigot/spigot.jar"]
